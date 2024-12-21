@@ -35,7 +35,7 @@ class BungaController extends Controller
         $validate = $request->validate([
             'foto' => 'required|file|max:5000',
             'nama_bunga' => 'required',
-            'deskripsi' => 'required|max:1000'
+            'deskripsi' => 'required|max:10000'
         ]);
 
         $result = Bunga::create($validate); //simpan ke tabel bunga
@@ -74,7 +74,7 @@ class BungaController extends Controller
         $validate = $request->validate([
             'foto' => 'required|file|max:5000',
             'nama_bunga' => 'required',
-            'deskripsi' => 'required|max:1000'
+            'deskripsi' => 'required|max:10000'
         ]);
 
         $result = Bunga::where('id', $id)->update($validate);
