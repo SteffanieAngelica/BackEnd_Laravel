@@ -42,6 +42,7 @@ class BungaController extends Controller
         if($result){
             if($request->hasFile('foto')) {
                 $path = $request->file('foto')->store('images', 'public');
+                $validate['foto'] = $path; // Add file path to the validated data
             }
             $data['success'] = true;
             $data['message'] = "Bunga berhasil disimpan";
@@ -79,6 +80,14 @@ class BungaController extends Controller
 
         $result = Bunga::where('id', $id)->update($validate);
         if($result){
+            if($request->file('foto')){
+                // upload image
+                $image = $request->file('foto');
+                $image->storeAs('public/images', $image->hashName());
+            
+                // delete old image
+                Storage::delete('public/images/'. $validate->image);
+            }
             $data['success'] = true;
             $data['message'] = "Data bunga berhasil diupdate";
             $data['result'] = $result;
@@ -92,8 +101,8 @@ class BungaController extends Controller
     public function destroy(Bunga $bunga)
     {
         $bunga = Bunga::find($bunga->id);
-        if($bunga->delete()){
-            $bunga->delete(); //hapus data fakultas berdasarkan $id
+        if($bunga){
+            $bunga->delete(); 
             $data["success"] = true;
             $data["message"] = "Data bunga berhasil dihapus";
             return response()->json($data, Response::HTTP_OK);

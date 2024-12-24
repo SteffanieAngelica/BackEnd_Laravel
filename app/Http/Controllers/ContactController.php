@@ -77,6 +77,16 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        //
+        $contact = Contact::find($contact->id);
+        if($contact){
+            $contact->delete();
+            $data["success"] = true;
+            $data["message"] = "Data pesan berhasil dihapus";
+            return response()->json($data, Response::HTTP_OK);
+        }else {
+            $data["success"] = false;
+            $data["message"] = "Data pesan tidak ditemukan";
+            return response()->json($data, Response::HTTP_NOT_FOUND);
+        }
     }
 }

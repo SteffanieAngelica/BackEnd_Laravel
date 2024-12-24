@@ -15,6 +15,7 @@ Route::get('logout', [AuthController::class, 'logout']);
 
 Route::post('contact', [ContactController::class, 'store'] );
 Route::get('contact', [ContactController::class, 'index'] );
+Route::delete('contact/{contact}', [ContactController::class, 'destroy'] );
 
 Route::post('bunga', [BungaController::class, 'store'] );
 Route::get('bunga', [BungaController::class, 'index'] );

@@ -51,7 +51,7 @@ class AuthController extends Controller
         ])) {
             $user = Auth::user();
             // Generate token, simpan ke tabel personal access token
-            $success['token'] = $user->createToken('MyApp')->plainTextToken;
+            // $success['token'] = $user->createToken('MyApp')->plainTextToken;
             $success['user'] = $user->name;
             // return $this->sendResponse($success, 'Login berhasil');
             return response()->json([
