@@ -39,12 +39,13 @@ class BungaController extends Controller
             'deskripsi' => 'required|max:10000'
         ]);
 
+        if($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('images', 'public');
+            $validate['foto'] = $path; // Add file path to the validated data
+        }
+
         $result = Bunga::create($validate); //simpan ke tabel bunga
         if($result){
-            if($request->hasFile('foto')) {
-                $path = $request->file('foto')->store('images', 'public');
-                $validate['foto'] = $path; // Add file path to the validated data
-            }
             $data['success'] = true;
             $data['message'] = "Bunga berhasil disimpan";
             $data['result'] = $result;
@@ -79,16 +80,22 @@ class BungaController extends Controller
             'deskripsi' => 'required|max:10000'
         ]);
 
+        $bungas = Bunga::find($id);
+        $filePath = 'public/'. $bungas->foto;
+
+        // Upload gambar baru
+        $path = $request->file('foto')->store('images', 'public');
+        $validate['foto'] = $path;
+
+        // Hapus gambar lama
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
+        }
+
+
         $result = Bunga::where('id', $id)->update($validate);
+
         if($result){
-            if($request->file('foto')){
-                // upload image
-                $image = $request->file('foto');
-                $image->storeAs('public/images', $image->hashName());
-            
-                // delete old image
-                Storage::delete('public/images/'. $validate->image);
-            }
             $data['success'] = true;
             $data['message'] = "Data bunga berhasil diupdate";
             $data['result'] = $result;
@@ -102,8 +109,16 @@ class BungaController extends Controller
     public function destroy(Bunga $bunga)
     {
         $bunga = Bunga::find($bunga->id);
+
+        $filePath = 'public/'. $bunga->foto;
+
         if($bunga){
-            $bunga->delete(); 
+            // Hapus gambar lama
+            if (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+
+            $bunga->delete();
             $data["success"] = true;
             $data["message"] = "Data bunga berhasil dihapus";
             return response()->json($data, Response::HTTP_OK);
